@@ -1,0 +1,43 @@
+[![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css.svg?branch=master)](https://travis-ci.com/TheSpicyMeatball/js-to-css)
+[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=master)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=master)
+
+# <%= package.name %>
+
+> <%= package.description %>
+
+<p>Hello friend.</p>
+<p>CSS-in-JS is awesome and powerful, but what do you do if you have legacy apps to support which can only consume CSS?</p>
+<p><i>[pause for effect...]</i></p>
+<p>Well, that's where <code><%= package.name %></code> comes in to save the day!</p>
+<p>With <code><%= package.name %></code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer!</p>
+
+<p><b>Version:</b> <%= package.version %></p>
+
+<% for(var f=0; f < utils.length; f++) { %>
+  <%- generateTable(utils[f], package.name) %>
+
+<hr />
+<% } %>
+
+<a href="#package-contents"></a>
+<h2>Package Contents</h2>
+
+Within the module you'll find the following directories and files:
+
+```html
+package.json
+CHANGELOG.md -- history of changes to the module
+LICENSE
+README.md -- this file
+/<%= fileTree.name -%><% fileTree.children.forEach( function(child){ if (child.type == 'directory') { %>
+  └───/<%= child.name -%><% child.children.forEach(function(grandChild){ if (grandChild.type == 'directory') { %>
+    └───/<%= grandChild.name -%><% grandChild.children.forEach(function(greatGrand){ %>
+      └───<%= greatGrand.name -%> - <%= formatBytes(greatGrand.size) -%><% }) } else { %>
+      └───<%= grandChild.name -%> - <%= formatBytes(grandChild.size) -%><% } })} else { %>
+  └───<%= child.name -%> - <%= formatBytes(child.size) -%><% }}) %>
+```
+
+<a href="#license"></a>
+<h2>License</h2>
+
+<%= package.license %>

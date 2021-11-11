@@ -1,0 +1,33 @@
+{
+  "name": "js-to-css",
+  "version": "0.0.1",
+  "description": "Generate CSS style sheets from your css-in-js JSON objects",
+  "main": "lib/es5/index.js",
+  "module": "lib/es6/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheSpicyMeatball/js-to-css.git"
+  },
+  "files": [
+    "lib",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "css-in-js",
+    "css",
+    "preprocessor",
+    "convert"
+  ],
+  "author": "Michael Paravano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheSpicyMeatball/js-to-css/issues"
+  },
+  "homepage": "https://github.com/TheSpicyMeatball/js-to-css#readme",
+  "dependencies": {
+    "@paravano/utils": "^1.13.1"
+  }
+}

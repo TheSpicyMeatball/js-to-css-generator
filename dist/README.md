@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css.svg?branch=main)](https://travis-ci.com/TheSpicyMeatball/js-to-css)
-[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=main)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=main)
+[![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css.svg?branch=master)](https://travis-ci.com/TheSpicyMeatball/js-to-css)
+[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=master)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=master)
 
 # js-to-css
 
