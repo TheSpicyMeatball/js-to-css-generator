@@ -210,6 +210,11 @@ export const anotherSomething = {
   display: 'flex',
   margin: 8,
 };
+
+export const oneMore = {
+  border: '1px solid #ccc',
+  padding: 16,
+};
 ```
 
 ```
@@ -250,10 +255,17 @@ writeFileSync(join(__dirname, cssFile.name), cssFile.css, 'utf8');
   font-size: 10px;
   padding: 8px;
 }
+
+.test-v1-one-more {
+  border: 1px solid #ccc;
+  padding: 16px;
+}
 ```
 
+<p>We have prepended all of our class names with a base class and version <code>.test-v1</code> except for <code>somethingElse</code> which has an override value of <code>.my-override</code>. We've also decided that we don't want to output <code>anotherSomething</code> so it's been added to the <code>ignore</code> list.</p>
+
 <h4>Multiple Files</h4>
-<p><code>jsToCss</code> can also handle multiple files at a time. Simply pass in an array of your <code>File</code> objects:</p>
+<p><code>jsToCss</code> can also handle multiple files at a time. Simply pass in an array of your <code>File</code> objects and you'll get an array of <code>CSSFile</code> objects in return:</p>
 
 ```
 const files = [file1, file2, file3];

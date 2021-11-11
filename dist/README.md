@@ -1,15 +1,15 @@
 [![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css.svg?branch=master)](https://travis-ci.com/TheSpicyMeatball/js-to-css)
-[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=master)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=main)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=main)
 
 # js-to-css
 
 > Generate CSS style sheets from your css-in-js JSON objects
 
 <p>Hello friend.</p>
-<p>CSS-in-JS is awesome and powerful, but what do you do if you have legacy apps to support which can only consume CSS?</p>
+<p>CSS-in-JS is awesome and powerful, but what do you do if you also have legacy apps to support which can only consume regular CSS?</p>
 <p><i>[pause for effect...]</i></p>
 <p>Well, that's where <code>js-to-css</code> comes in to save the day!</p>
-<p>With <code>js-to-css</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer!</p>
+<p>With <code>js-to-css</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
 
 <p><b>Version:</b> 0.0.1</p>
 
@@ -289,6 +289,11 @@ export const anotherSomething = {
   display: 'flex',
   margin: 8,
 };
+
+export const oneMore = {
+  border: '1px solid #ccc',
+  padding: 16,
+};
 ```
 
 ```
@@ -329,10 +334,17 @@ writeFileSync(join(__dirname, cssFile.name), cssFile.css, 'utf8');
   font-size: 10px;
   padding: 8px;
 }
+
+.test-v1-one-more {
+  border: 1px solid #ccc;
+  padding: 16px;
+}
 ```
 
+<p>We have prepended all of our class names with a base class and version <code>.test-v1</code> except for <code>somethingElse</code> which has an override value of <code>.my-override</code>. We've also decided that we don't want to output <code>anotherSomething</code> so it's been added to the <code>ignore</code> list.</p>
+
 <h4>Multiple Files</h4>
-<p><code>jsToCss</code> can also handle multiple files at a time. Simply pass in an array of your <code>File</code> objects:</p>
+<p><code>jsToCss</code> can also handle multiple files at a time. Simply pass in an array of your <code>File</code> objects and you'll get an array of <code>CSSFile</code> objects in return:</p>
 
 ```
 const files = [file1, file2, file3];
