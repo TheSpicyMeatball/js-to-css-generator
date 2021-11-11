@@ -1,15 +1,15 @@
-[![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css.svg?branch=master)](https://travis-ci.com/TheSpicyMeatball/js-to-css)
-[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css/badge.svg?branch=main)](https://coveralls.io/github/TheSpicyMeatball/js-to-css?branch=main)
+[![Build Status](https://travis-ci.com/TheSpicyMeatball/js-to-css-generator.svg?branch=master)](https://travis-ci.com/TheSpicyMeatball/js-to-css-generator)
+[![Coverage Status](https://coveralls.io/repos/github/TheSpicyMeatball/js-to-css-generator/badge.svg?branch=main)](https://coveralls.io/github/TheSpicyMeatball/js-to-css-generator?branch=main)
 
-# js-to-css
+# js-to-css-generator
 
 > Generate CSS style sheets from your css-in-js JSON objects
 
 <p>Hello friend.</p>
 <p>CSS-in-JS is awesome and powerful, but what do you do if you also have legacy apps to support which can only consume regular CSS?</p>
 <p><i>[pause for effect...]</i></p>
-<p>Well, that's where <code>js-to-css</code> comes in to save the day!</p>
-<p>With <code>js-to-css</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
+<p>Well, that's where <code>js-to-css-generator</code> comes in to save the day!</p>
+<p>With <code>js-to-css-generator</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
 
 <p><b>Version:</b> 0.0.1</p>
 
@@ -70,7 +70,7 @@ export type CSSFile = {
   <h3>Import</h3>
 
 ```
-import { jsToCss, CSSFile, File } from 'js-to-css';
+import { jsToCss, CSSFile, File } from 'js-to-css-generator';
 ```
 
   <h3>Examples</h3>
