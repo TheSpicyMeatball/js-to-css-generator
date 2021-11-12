@@ -27,10 +27,14 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     let outer = '';
 
     for (const key of keys) {
+      if (key === 'label') continue;
+      
       if (key.startsWith(':')) {
         outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`, undefined, undefined, objName);
       } else if (typeof obj[key] === 'object' && key.startsWith('@media')) {
         outer = outer + getCss(obj[key] as Record<string, unknown>, key, className, undefined, objName);
+      } else if (typeof obj[key] === 'object' && key.startsWith('[')) {
+        outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`, undefined, undefined, objName);
       } else if (typeof obj[key] === 'object') {
         outer = key.includes('&')
                 ? outer + getCss(obj[key] as Record<string, unknown>, key.replace(/&/g, isNotNilOrEmpty(combinator) ? combinator : className), undefined, undefined, objName)

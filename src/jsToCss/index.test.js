@@ -519,4 +519,61 @@ p {
   padding: 16px;
 }`});
   });
+
+  test('nested attribute styles', () => {
+    const _module = {
+      information: {
+        backgroundColor: 'green',
+        fontSize: 12,
+        padding: 16,
+        '[class*="-value"]': {
+          color: '#fff',
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    const css = `.information {
+  background-color: green;
+  font-size: 12px;
+  padding: 16px;
+}
+
+.information[class*="-value"] {
+  color: #fff;
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
+
+  test('no label', () => {
+    const _module = {
+      something: {
+        label: 'something',
+        backgroundColor: '#fff',
+        fontSize: 12,
+        padding: 16,
+      },
+    };
+
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css: `.something {
+  background-color: #fff;
+  font-size: 12px;
+  padding: 16px;
+}`});
+  });
 });
