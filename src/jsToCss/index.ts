@@ -1,19 +1,5 @@
 import { first, iif, isNotNilOrEmpty, kebab } from '@paravano/utils';
-
-export type File = {
-  name?: string,
-  prepend?: string,
-  overrides?: Record<string, string>,
-  combinators?: Record<string, string>,
-  ignore?: string[],
-  version?: string,
-  module: Record<string, Record<string, string | number>>,
-};
-
-export type CSSFile = {
-  name?: string,
-  css: string,
-};
+import { CSSFile, File } from '../types';
 
 /**
  * Convert JavaScript style objects to CSS files
@@ -23,68 +9,32 @@ export type CSSFile = {
  * @returns {CSSFile | CSSFile[]} The generated CSS file content
  * @docgen_import { jsToCss, CSSFile, File }
  * @docgen_imp_note <em>CSSFile</em> and <em>File</em> are TypeScript types and are only for (optional) use with TypeScript projects
- * @docgen_types 
- * export type File = {
- *   // any name that you would like to use as an identifier for the File
- *   name?: string,
- * 
- *   // optional string to use to prepend all of your classes for scope
- *   prepend?: string, 
- * 
- *   // optional object with key/value pairs where the keys match the style 
- *   // object names you want to override and values that are the class 
- *   // names to use as the overrides
- *   overrides?: Record<string, string>, 
- * 
- *   // optional object with key/value pairs where the keys match the style 
- *   // object names you want to affect and values that are the class names
- *   // to use for the combinators. The value will replace any '&' in your
- *   // style names.
- *   combinators?: Record<string, string>,
- * 
- *   // optional array of names of style objects you don't want to include 
- *   // as part of the output CSS file
- *   ignore?: string[],
- * 
- *   // optional string representation of the file version to add as part
- *   // of the class name
- *   version?: string,
- * 
- *   // object that contains all of your styled objects
- *   module: Record<string, Record<string, string | number>>,
- * };
- * 
- * export type CSSFile = {
- *   // any name that you gave your {File}
- *   name?: string,
- *   
- *   // The CSS file string content
- *   css: string,
- * };
  */
 export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
   let output: CSSFile[] = [];
   const _files = Array.isArray(files) ? files : [files];
 
-  const getCss = (obj: Record<string, unknown>, className: string, innerWrapper?: string, combinator?: string) => {
+  const getCss = (obj: Record<string, unknown>, className: string, innerWrapper?: string, combinator?: string, objName?: string) => {
     const keys = Object.keys(obj);
     keys.sort();
     
-    let cssClass = isNotNilOrEmpty(innerWrapper)
+    let cssClass = iif(isNotNilOrEmpty(objName), `/* ${objName} */\n`, '') + (
+      isNotNilOrEmpty(innerWrapper)
       ? `${className} {\n  ${innerWrapper} {\n`
-      : `${className} {\n`;
+      : `${className} {\n`
+    );
 
     let outer = '';
 
     for (const key of keys) {
       if (key.startsWith(':')) {
-        outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`);
+        outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`, undefined, undefined, objName);
       } else if (typeof obj[key] === 'object' && key.startsWith('@media')) {
-        outer = outer + getCss(obj[key] as Record<string, unknown>, key, className);
+        outer = outer + getCss(obj[key] as Record<string, unknown>, key, className, undefined, objName);
       } else if (typeof obj[key] === 'object') {
         outer = key.includes('&')
-                ? outer + getCss(obj[key] as Record<string, unknown>, key.replace(/&/g, isNotNilOrEmpty(combinator) ? combinator : className))
-                : outer + getCss(obj[key] as Record<string, unknown>, `${className} ${key}`);
+                ? outer + getCss(obj[key] as Record<string, unknown>, key.replace(/&/g, isNotNilOrEmpty(combinator) ? combinator : className), undefined, undefined, objName)
+                : outer + getCss(obj[key] as Record<string, unknown>, `${className} ${key}`, undefined, undefined, objName);
       } else if (obj[key] !== undefined) {
         cssClass = cssClass + `  ${isNotNilOrEmpty(innerWrapper) ? '  ' : ''}${key.startsWith('--') ? key : kebab(key)}: ${obj[key]}${typeof obj[key] === 'number' && obj[key] !== 0 ? 'px' : ''};\n`;
       }
@@ -113,7 +63,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
         if (isNotNilOrEmpty(file.overrides?.[name])) {
           const combinator = file.combinators?.[name] ?? baseClass;
 
-          css = css + getCss(file.module[name], file.overrides[name], undefined, combinator);
+          css = css + getCss(file.module[name], file.overrides[name], undefined, combinator, file.map ? name : undefined);
         } else {
           const className = baseClass.endsWith(kebab(name)) 
                             ? baseClass 
@@ -121,13 +71,13 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
 
           const combinator = file.combinators?.[name] ?? iif(baseClass !== '.', baseClass, undefined);
 
-          css = css + getCss(file.module[name], className, undefined, combinator);
+          css = css + getCss(file.module[name], className, undefined, combinator, file.map ? name : undefined);
         }
       }
     }
 
     // remove empty styles
-    css = css.replace(/.*? {(?:\r\n|\n|\r)}(?:\r\n|\n|\r)?(?:\r\n|\n|\r)?/g, '');
+    css = css.replace(/(?:\/* ?.*? ?\*\/(?:\r\n|\n|\r))?.*? {(?:\r\n|\n|\r)}(?:\r\n|\n|\r)?(?:\r\n|\n|\r)?/g, '');
 
     output = output.concat({ name: file.name, css: css.trim() });
   }

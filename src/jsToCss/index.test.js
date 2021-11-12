@@ -50,6 +50,11 @@ describe('jsToCss', () => {
         fontSize: 12,
         padding: 16,
       },
+      something: {
+        backgroundColor: '#fff',
+        fontSize: 12,
+        padding: 16,
+      },
     };
 
     const input = {
@@ -60,6 +65,12 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `.test {
+  background-color: #fff;
+  font-size: 12px;
+  padding: 16px;
+}
+
+.test-something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
@@ -423,6 +434,88 @@ describe('jsToCss', () => {
       name: 'index.css',
       css: `.something {
   background-color: #fff;
+  padding: 16px;
+}`});
+  });
+
+  test('map', () => {
+    const input = {
+      name: 'index.css',
+      map: true,
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css: `/* something */
+.something {
+  background-color: #fff;
+  font-size: 12px;
+  padding: 16px;
+}`});
+  });
+
+  test('map + combinators', () => {
+    const _module = {
+      something: {
+        backgroundColor: '#fff',
+        fontSize: 12,
+        padding: 16,
+      },
+      combinators: {
+        '& + &': {
+          marginLeft: 8,
+        },
+        '&:first-child': {
+          marginLeft: 0,
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      map: true,
+      module: _module,
+    };
+
+    const css = `/* something */
+.something {
+  background-color: #fff;
+  font-size: 12px;
+  padding: 16px;
+}
+
+/* combinators */
+.combinators + .combinators {
+  margin-left: 8px;
+}
+
+/* combinators */
+.combinators:first-child {
+  margin-left: 0;
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
+
+  test('map + override', () => {
+    const input = {
+      overrides: {
+        something: 'p',
+      },
+      map: true,
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: undefined,
+      css: `/* something */
+p {
+  background-color: #fff;
+  font-size: 12px;
   padding: 16px;
 }`});
   });
