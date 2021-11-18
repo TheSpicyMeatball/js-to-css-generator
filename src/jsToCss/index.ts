@@ -72,7 +72,8 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
                 });
 
       } else if (obj[key] !== undefined) {
-        cssClass = cssClass + `  ${indent}${key.startsWith('--') ? key : kebab(key)}: ${obj[key]}${typeof obj[key] === 'number' && !numberPxExclusions.includes(key) && obj[key] !== 0 ? 'px' : ''};\n`;
+        const prop = key.startsWith('-') ? key : kebab(key).replace(/^webkit-/g, '-webkit-');
+        cssClass = cssClass + `  ${indent}${prop}: ${obj[key]}${typeof obj[key] === 'number' && !numberPxExclusions.includes(key) && obj[key] !== 0 ? 'px' : ''};\n`;
       }
     }
 
@@ -128,7 +129,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
         obj: item.obj[x] as Record<string, unknown>,
         className: x,
         indent: '  ',
-      }).replace(/(?:\r\n|\n|\r)$/g, '')).join('')}}\n`;
+      }).replace(/(?:\r\n|\n|\r)$/g, '')).join('')}}\n\n`;
     }
 
     return output;

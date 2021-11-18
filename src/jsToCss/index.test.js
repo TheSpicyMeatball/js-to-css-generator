@@ -838,4 +838,29 @@ p {
   }
 }`});
   });
+
+  test('Webkit', () => {
+    const _module = {
+      something: {
+        backgroundColor: '#fff',
+        fontSize: 12,
+        padding: 16,
+        'WebkitTransition': 'all .2s',
+      },
+    };
+
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css: `.something {
+  -webkit-transition: all .2s;
+  background-color: #fff;
+  font-size: 12px;
+  padding: 16px;
+}`});
+  });
 });

@@ -1,6 +1,6 @@
 {
   "name": "js-to-css-generator",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Generate CSS style sheets from your css-in-js JSON objects",
   "main": "lib/es5/index.js",
   "module": "lib/es6/index.js",
@@ -19,6 +19,7 @@
     "css-in-js",
     "css",
     "generator",
+    "jss",
     "preprocessor",
     "convert"
   ],

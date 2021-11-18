@@ -1,3 +1,6 @@
+## [1.4.0] - 2021-11-18
+- added Webkit prop support
+
 ## [1.3.0] - 2021-11-18
 - added keyframes support
 
