@@ -1,3 +1,6 @@
+## [1.2.0] - 2021-11-18
+- added media queries and nested media queries
+
 ## [1.1.0] - 2021-11-12
 - added attribute selectors
 

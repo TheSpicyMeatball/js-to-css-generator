@@ -1,5 +1,7 @@
-import { first, iif, isNotNilOrEmpty, kebab } from '@paravano/utils';
+import { first, iif, isNotNilOrEmpty, kebab, isNilOrEmpty } from '@paravano/utils';
 import { CSSFile, File } from '../types';
+
+type MediaQuery = { key: string, obj: Record<string, unknown>, children?: MediaQuery[] };
 
 /**
  * Convert JavaScript style objects to CSS files
@@ -14,37 +16,86 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
   let output: CSSFile[] = [];
   const _files = Array.isArray(files) ? files : [files];
 
-  const getCss = (obj: Record<string, unknown>, className: string, innerWrapper?: string, combinator?: string, objName?: string) => {
+  const getCss = ({ obj, className, combinator, objName, indent = '' } : {
+    obj: Record<string, unknown>, 
+    className: string,
+    combinator?: string, 
+    objName?: string, 
+    indent?: string,
+  }) => {
     const keys = Object.keys(obj);
     keys.sort();
     
-    let cssClass = iif(isNotNilOrEmpty(objName), `/* ${objName} */\n`, '') + (
-      isNotNilOrEmpty(innerWrapper)
-      ? `${className} {\n  ${innerWrapper} {\n`
-      : `${className} {\n`
-    );
+    let cssClass = iif(isNotNilOrEmpty(objName), `${indent}/* ${objName} */\n`, '') + `${indent}${className.trim()} {\n`;
 
     let outer = '';
 
+    // Keys that have number types which we should NOT add 'px' to...
+    const numberPxExclusions = ['zIndex', 'zoom'];
+
     for (const key of keys) {
-      if (key === 'label') continue;
+      if (key === 'label' || (typeof obj[key] === 'object' && key.startsWith('@media'))) continue;
       
       if (key.startsWith(':')) {
-        outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`, undefined, undefined, objName);
-      } else if (typeof obj[key] === 'object' && key.startsWith('@media')) {
-        outer = outer + getCss(obj[key] as Record<string, unknown>, key, className, undefined, objName);
+        // pseudo selector
+        outer = outer + getCss({
+          obj: obj[key] as Record<string, unknown>, 
+          className: `${className}${key}`,
+          objName, 
+          indent,
+        });
+
       } else if (typeof obj[key] === 'object' && key.startsWith('[')) {
-        outer = outer + getCss(obj[key] as Record<string, unknown>, `${className}${key}`, undefined, undefined, objName);
+        // attribute selector
+        outer = outer + getCss({
+          obj: obj[key] as Record<string, unknown>, 
+          className: `${className}${key}`,
+          objName,
+          indent,
+        });
+        
       } else if (typeof obj[key] === 'object') {
+        // nested object
         outer = key.includes('&')
-                ? outer + getCss(obj[key] as Record<string, unknown>, key.replace(/&/g, isNotNilOrEmpty(combinator) ? combinator : className), undefined, undefined, objName)
-                : outer + getCss(obj[key] as Record<string, unknown>, `${className} ${key}`, undefined, undefined, objName);
+                ? outer + getCss({
+                  obj: obj[key] as Record<string, unknown>, 
+                  className: key.replace(/&/g, isNotNilOrEmpty(combinator) ? combinator : className), 
+                  objName,
+                  indent, 
+                })
+                : outer + getCss({
+                  obj: obj[key] as Record<string, unknown>, 
+                  className: `${className} ${key}`, 
+                  objName,
+                  indent,
+                });
+
       } else if (obj[key] !== undefined) {
-        cssClass = cssClass + `  ${isNotNilOrEmpty(innerWrapper) ? '  ' : ''}${key.startsWith('--') ? key : kebab(key)}: ${obj[key]}${typeof obj[key] === 'number' && obj[key] !== 0 ? 'px' : ''};\n`;
+        cssClass = cssClass + `  ${indent}${key.startsWith('--') ? key : kebab(key)}: ${obj[key]}${typeof obj[key] === 'number' && !numberPxExclusions.includes(key) && obj[key] !== 0 ? 'px' : ''};\n`;
       }
     }
 
-    return cssClass + (isNotNilOrEmpty(innerWrapper) ? '  }\n' : '') + '}\n\n' + outer;
+    return cssClass + indent + '}\n\n' + outer;
+  };
+
+  const getMediaQueries = (obj: Record<string, unknown>) : MediaQuery[] => {
+    const keys = Object.keys(obj);
+    keys.sort();
+    
+    let output = [];
+
+    for (const key of keys) {      
+      if (typeof obj[key] === 'object' && key.startsWith('@media')) {
+        // media query
+        const query = { key, obj: obj[key], children: getMediaQueries(obj[key] as Record<string, unknown>) };
+        output = [...output, query];
+      } else if (typeof obj[key] === 'object') {
+        // nested object style
+        output = [...output, ...getMediaQueries(obj[key] as Record<string, unknown>)];
+      } 
+    }
+
+    return output;
   };
 
   for (let i = 0; i < _files.length; i++) {
@@ -64,10 +115,32 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
 
     for (const name of objectNames) {
       if (!file.ignore?.includes(name)) {
+        const media = getMediaQueries(file.module[name]);
+
         if (isNotNilOrEmpty(file.overrides?.[name])) {
           const combinator = file.combinators?.[name] ?? baseClass;
 
-          css = css + getCss(file.module[name], file.overrides[name], undefined, combinator, file.map ? name : undefined);
+          css = css + getCss({
+            obj: file.module[name], 
+            className: file.overrides[name],
+            combinator, 
+            objName: file.map ? name : undefined,
+          });
+
+          const getMediaCss = (media: MediaQuery[], indent: string) : string => {
+            if (isNilOrEmpty(media)) return '';
+
+            const mediaCss = media.map(x => `${indent}${x.key} {\n${getCss({
+              obj: x.obj, 
+              className: file.overrides[name], 
+              combinator, 
+              objName: file.map ? name : undefined,
+              indent: indent + '  ',
+            }).replace(/(?:\r\n|\n|\r)$/g, '')}${getMediaCss(x.children, indent + '  ')}${indent}}\n`);
+            return mediaCss.join('\n');
+          };
+
+          css = css + getMediaCss(media, '');
         } else {
           const className = baseClass.endsWith(kebab(name)) 
                             ? baseClass 
@@ -75,13 +148,33 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
 
           const combinator = file.combinators?.[name] ?? iif(baseClass !== '.', baseClass, undefined);
 
-          css = css + getCss(file.module[name], className, undefined, combinator, file.map ? name : undefined);
+          css = css + getCss({
+            obj: file.module[name], 
+            className, 
+            combinator, 
+            objName: file.map ? name : undefined,
+          });
+          
+          const getMediaCss = (media: MediaQuery[], indent: string) : string => {
+            if (isNilOrEmpty(media)) return '';
+
+            const mediaCss = media.map(x => `${indent}${x.key} {\n${getCss({
+              obj: x.obj, 
+              className, 
+              combinator, 
+              objName: file.map ? name : undefined,
+              indent: indent + '  ',
+            }).replace(/(?:\r\n|\n|\r)$/g, '')}${getMediaCss(x.children, indent + '  ')}${indent}}\n`);
+            return mediaCss.join('\n');
+          };
+
+          css = css + getMediaCss(media, '');
         }
       }
     }
 
     // remove empty styles
-    css = css.replace(/(?:\/* ?.*? ?\*\/(?:\r\n|\n|\r))?.*? {(?:\r\n|\n|\r)}(?:\r\n|\n|\r)?(?:\r\n|\n|\r)?/g, '');
+    css = css.replace(/ *(?:\/* ?.*? ?\*\/(?:\r\n|\n|\r))?.*? {(?:\r\n|\n|\r) *}(?:\r\n|\n|\r)?(?:\r\n|\n|\r)?/g, '');
 
     output = output.concat({ name: file.name, css: css.trim() });
   }

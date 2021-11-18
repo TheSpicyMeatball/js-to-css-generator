@@ -283,6 +283,72 @@ describe('jsToCss', () => {
       css,
     });
   });
+
+  test('combinators with nested media query', () => {
+    const _module = {
+      combinators: {
+        '& + &': {
+          marginLeft: 8,
+        },
+        '&:first-child': {
+          padding: 4,
+        },
+        '@media only screen and (max-width: 699px)': {
+          '& + &': {
+            marginLeft: 4,
+          },
+        },
+        '@media only screen and (min-width: 1px)': {
+          '& + &': {
+            marginLeft: 0,
+          },
+          '@media only screen and (max-width: 1280px)': {
+            '& + &': {
+              marginLeft: 14,
+            },
+          },
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      combinators: {
+        combinators: '.test',
+      },
+      module: _module,
+    };
+
+    const css = `.test + .test {
+  margin-left: 8px;
+}
+
+.test:first-child {
+  padding: 4px;
+}
+
+@media only screen and (max-width: 699px) {
+  .test + .test {
+    margin-left: 4px;
+  }
+}
+
+@media only screen and (min-width: 1px) {
+  .test + .test {
+    margin-left: 0;
+  }
+  @media only screen and (max-width: 1280px) {
+    .test + .test {
+      margin-left: 14px;
+    }
+  }
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
   
   test('nested styles', () => {
     const _module = {
@@ -343,6 +409,129 @@ describe('jsToCss', () => {
 
 @media only screen and (max-width: 699px) {
   .information {
+    background-color: #777;
+    box-shadow: 0 5px 5px rgb(0,0,0.2);
+  }
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
+
+  test('media query + override', () => {
+    const _module = {
+      information: {
+        backgroundColor: 'green',
+        fontSize: 12,
+        padding: 16,
+        '@media only screen and (max-width: 699px)': {
+          backgroundColor: '#777',
+          boxShadow: '0 5px 5px rgb(0,0,0.2)',
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      overrides: {
+        information: '.test',
+      },
+      module: _module,
+    };
+
+    const css = `.test {
+  background-color: green;
+  font-size: 12px;
+  padding: 16px;
+}
+
+@media only screen and (max-width: 699px) {
+  .test {
+    background-color: #777;
+    box-shadow: 0 5px 5px rgb(0,0,0.2);
+  }
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
+
+  test('media query + map', () => {
+    const _module = {
+      information: {
+        backgroundColor: 'green',
+        fontSize: 12,
+        padding: 16,
+        '@media only screen and (max-width: 699px)': {
+          backgroundColor: '#777',
+          boxShadow: '0 5px 5px rgb(0,0,0.2)',
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      map: true,
+      module: _module,
+    };
+
+    const css = `/* information */
+.information {
+  background-color: green;
+  font-size: 12px;
+  padding: 16px;
+}
+
+@media only screen and (max-width: 699px) {
+  /* information */
+  .information {
+    background-color: #777;
+    box-shadow: 0 5px 5px rgb(0,0,0.2);
+  }
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+    });
+  });
+
+  test('media query + override + map', () => {
+    const _module = {
+      information: {
+        backgroundColor: 'green',
+        fontSize: 12,
+        padding: 16,
+        '@media only screen and (max-width: 699px)': {
+          backgroundColor: '#777',
+          boxShadow: '0 5px 5px rgb(0,0,0.2)',
+        },
+      },
+    };
+  
+    const input = {
+      name: 'index.css',
+      overrides: {
+        information: '.test',
+      },
+      map: true,
+      module: _module,
+    };
+
+    const css = `/* information */
+.test {
+  background-color: green;
+  font-size: 12px;
+  padding: 16px;
+}
+
+@media only screen and (max-width: 699px) {
+  /* information */
+  .test {
     background-color: #777;
     box-shadow: 0 5px 5px rgb(0,0,0.2);
   }
@@ -574,6 +763,29 @@ p {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
+}`});
+  });
+
+  test('number px exclusions', () => {
+    const _module = {
+      something: {
+        fontSize: 12,
+        zIndex: 1000,
+        zoom: 1,
+      },
+    };
+
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css: `.something {
+  font-size: 12px;
+  z-index: 1000;
+  zoom: 1;
 }`});
   });
 });
