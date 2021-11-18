@@ -625,7 +625,7 @@ README.md -- this file
       └───index.js - 430 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 8.48 KB
+      └───index.js - 9.99 KB
       └───types.d.ts - 707 Bytes
       └───types.js - 79 Bytes
   └───/es6
@@ -636,7 +636,7 @@ README.md -- this file
       └───index.js - 76 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 8.28 KB
+      └───index.js - 9.79 KB
       └───types.d.ts - 707 Bytes
       └───types.js - 12 Bytes
 ```

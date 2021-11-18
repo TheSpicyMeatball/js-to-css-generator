@@ -788,4 +788,54 @@ p {
   zoom: 1;
 }`});
   });
+
+  test('keyframes', () => {
+    const _module = {
+      loading: {
+        display: 'block',
+        position: 'absolute',
+        '@keyframes bouncedelay': {
+          '0%': {
+            transform: 'scale(0)',
+          },
+          '80%': {
+            transform: 'scale(0)',
+          },
+          '100%': {
+            transform: 'scale(0)',
+          },
+          '40%': {
+            transform: 'scale(1)',
+          },
+        },
+      },
+    };
+
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css: `.loading {
+  display: block;
+  position: absolute;
+}
+
+@keyframes bouncedelay {
+  0% {
+    transform: scale(0);
+  }
+  80% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}`});
+  });
 });

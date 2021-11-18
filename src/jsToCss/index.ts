@@ -2,6 +2,7 @@ import { first, iif, isNotNilOrEmpty, kebab, isNilOrEmpty } from '@paravano/util
 import { CSSFile, File } from '../types';
 
 type MediaQuery = { key: string, obj: Record<string, unknown>, children?: MediaQuery[] };
+type Item = { key: string, obj: Record<string, unknown> };
 
 /**
  * Convert JavaScript style objects to CSS files
@@ -34,7 +35,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     const numberPxExclusions = ['zIndex', 'zoom'];
 
     for (const key of keys) {
-      if (key === 'label' || (typeof obj[key] === 'object' && key.startsWith('@media'))) continue;
+      if (key === 'label' || (typeof obj[key] === 'object' && (key.startsWith('@media') || key.startsWith('@keyframes')))) continue;
       
       if (key.startsWith(':')) {
         // pseudo selector
@@ -98,6 +99,41 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     return output;
   };
 
+  const getKeyframes = (obj: Record<string, unknown>) : Item[] => {
+    const keys = Object.keys(obj);
+    keys.sort();
+    
+    let output = [];
+
+    for (const key of keys) {      
+      if (typeof obj[key] === 'object' && key.startsWith('@keyframes')) {
+        // keyframes
+        const keyframes = { key, obj: obj[key] };
+        output = [...output, keyframes];
+      } else if (typeof obj[key] === 'object') {
+        // nested object style
+        output = [...output, ...getKeyframes(obj[key] as Record<string, unknown>)];
+      } 
+    }
+
+    return output;
+  };
+
+  const writeKeyframes = (keyframes: Item[]) : string => {
+    let output = '';
+
+    for (const item of keyframes) {
+      const keys = Object.keys(item.obj);
+      output = output + `${item.key} {\n${keys.map(x => getCss({
+        obj: item.obj[x] as Record<string, unknown>,
+        className: x,
+        indent: '  ',
+      }).replace(/(?:\r\n|\n|\r)$/g, '')).join('')}}\n`;
+    }
+
+    return output;
+  };
+
   for (let i = 0; i < _files.length; i++) {
     let css = '';
     const file = _files[i];
@@ -116,6 +152,8 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     for (const name of objectNames) {
       if (!file.ignore?.includes(name)) {
         const media = getMediaQueries(file.module[name]);
+        const keyframes = getKeyframes(file.module[name]);
+        const keyframesCss = writeKeyframes(keyframes);
 
         if (isNotNilOrEmpty(file.overrides?.[name])) {
           const combinator = file.combinators?.[name] ?? baseClass;
@@ -170,6 +208,8 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
 
           css = css + getMediaCss(media, '');
         }
+
+        css = css + keyframesCss;
       }
     }
 
