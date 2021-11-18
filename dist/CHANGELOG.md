@@ -1,3 +1,6 @@
+## [1.3.0] - 2021-11-18
+- added keyframes support
+
 ## [1.2.0] - 2021-11-18
 - added media queries and nested media queries
 

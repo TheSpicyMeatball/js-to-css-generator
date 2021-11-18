@@ -11,7 +11,7 @@
 <p>Well, that's where <code>js-to-css-generator</code> comes in to save the day!</p>
 <p>With <code>js-to-css-generator</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
 
-<p><b>Version:</b> 1.2.0</p>
+<p><b>Version:</b> 1.3.0</p>
 
 <h3>Utils</h3>
 <ul>
