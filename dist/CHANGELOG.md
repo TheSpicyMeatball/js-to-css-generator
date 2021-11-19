@@ -1,3 +1,6 @@
+## [1.5.0] - 2021-11-19
+- added maps for js objects and classes
+
 ## [1.4.0] - 2021-11-18
 - added Webkit prop support
 

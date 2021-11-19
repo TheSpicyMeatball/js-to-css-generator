@@ -510,6 +510,12 @@ export type CSSFile = {
   
   // The CSS file string content
   css: string,
+  
+  // JavaScript Map object of key/value pairs that maps the JS object name to a class name.
+  objectToStyleMap: Map<string, string>,
+
+  // JavaScript Map object of key/value pairs that maps the class name name to a JS object.
+  styleToObjectMap: Map<string, string>,
 };
 ```
 

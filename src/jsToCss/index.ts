@@ -1,4 +1,4 @@
-import { first, iif, isNotNilOrEmpty, kebab, isNilOrEmpty } from '@paravano/utils';
+import { first, iif, isNilOrEmpty, isNotNilOrEmpty, kebab } from '@paravano/utils';
 import { CSSFile, File } from '../types';
 
 type MediaQuery = { key: string, obj: Record<string, unknown>, children?: MediaQuery[] };
@@ -15,6 +15,8 @@ type Item = { key: string, obj: Record<string, unknown> };
  */
 export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
   let output: CSSFile[] = [];
+  const objectToStyleMap = new Map<string, string>();
+  const styleToObjectMap = new Map<string, string>();
   const _files = Array.isArray(files) ? files : [files];
 
   const getCss = ({ obj, className, combinator, objName, indent = '' } : {
@@ -76,7 +78,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
         cssClass = cssClass + `  ${indent}${prop}: ${obj[key]}${typeof obj[key] === 'number' && !numberPxExclusions.includes(key) && obj[key] !== 0 ? 'px' : ''};\n`;
       }
     }
-
+    
     return cssClass + indent + '}\n\n' + outer;
   };
 
@@ -120,7 +122,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     return output;
   };
 
-  const writeKeyframes = (keyframes: Item[]) : string => {
+  const getKeyframesCss = (keyframes: Item[]) : string => {
     let output = '';
 
     for (const item of keyframes) {
@@ -154,11 +156,15 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
       if (!file.ignore?.includes(name)) {
         const media = getMediaQueries(file.module[name]);
         const keyframes = getKeyframes(file.module[name]);
-        const keyframesCss = writeKeyframes(keyframes);
+        const keyframesCss = getKeyframesCss(keyframes);
 
         if (isNotNilOrEmpty(file.overrides?.[name])) {
           const combinator = file.combinators?.[name] ?? baseClass;
 
+          objectToStyleMap.set(name, file.combinators?.[name] ?? file.overrides[name]);
+          styleToObjectMap.set(file.combinators?.[name] ?? file.overrides[name], name);
+          // styleMap = assign(styleMap, { [name]: file.combinators?.[name] ?? file.overrides[name] }) as Record<string, string>;
+          
           css = css + getCss({
             obj: file.module[name], 
             className: file.overrides[name],
@@ -186,6 +192,10 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
                             : iif(baseClass !== '.', baseClass + '-', baseClass) + kebab(name);
 
           const combinator = file.combinators?.[name] ?? iif(baseClass !== '.', baseClass, undefined);
+
+          objectToStyleMap.set(name, file.combinators?.[name] ?? className);
+          styleToObjectMap.set(file.combinators?.[name] ?? className, name);
+          // styleMap = assign(styleMap, { [name]: file.combinators?.[name] ?? className }) as Record<string, string>;
 
           css = css + getCss({
             obj: file.module[name], 
@@ -217,7 +227,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     // remove empty styles
     css = css.replace(/ *(?:\/* ?.*? ?\*\/(?:\r\n|\n|\r))?.*? {(?:\r\n|\n|\r) *}(?:\r\n|\n|\r)?(?:\r\n|\n|\r)?/g, '');
 
-    output = output.concat({ name: file.name, css: css.trim() });
+    output = output.concat({ name: file.name, css: css.trim(), objectToStyleMap, styleToObjectMap });
   }
 
   return Array.isArray(files) ? output : first(output);

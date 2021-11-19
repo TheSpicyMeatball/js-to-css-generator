@@ -12,6 +12,8 @@ export type File = {
 export type CSSFile = {
   name?: string,
   css: string,
+  objectToStyleMap: Map<string, string>,
+  styleToObjectMap: Map<string, string>,
 };
 
 export type Tags = {

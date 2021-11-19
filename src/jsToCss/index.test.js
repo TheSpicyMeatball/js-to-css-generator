@@ -17,13 +17,24 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css: `.something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('override', () => {
@@ -34,13 +45,23 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', 'p'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['p', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `p {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap});
   });
 
   test('prepend', () => { 
@@ -62,6 +83,16 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['test', '.test'],
+      ['something', '.test-something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'test'],
+      ['.test-something', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `.test {
@@ -74,7 +105,9 @@ describe('jsToCss', () => {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap});
   });
 
   test('prepend + overrides', () => {  
@@ -86,13 +119,23 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.test-something-else'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test-something-else', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `.test-something-else {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap});
   });
   
   test('version', () => {
@@ -101,13 +144,23 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.v1-2-3-something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.v1-2-3-something', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `.v1-2-3-something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap});
   });
 
   test('version + prepend', () => {  
@@ -117,13 +170,23 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.test-v1-2-3-something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test-v1-2-3-something', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `.test-v1-2-3-something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap});
   });
 
   test('multiple files', () => {
@@ -132,20 +195,34 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
+
     expect(jsToCss([input, { ...input, name: 'another-file.css' }])).toStrictEqual([{
       name: 'index.css',
       css: `.something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`},
-{
-  name: 'another-file.css',
-  css: `.something {
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    },
+    {
+      name: 'another-file.css',
+      css: `.something {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`},
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    },
 ]);
   });
 
@@ -165,6 +242,16 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['combinators', '.combinators'],
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.combinators', 'combinators'],
+      ['.something', 'something'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -188,6 +275,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -207,6 +296,16 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['combinators', '.test'],
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'combinators'],
+      ['.something', 'something'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -233,6 +332,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -252,6 +353,16 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['combinators', '.test'],
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'combinators'],
+      ['.something', 'something'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -281,6 +392,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -310,6 +423,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['combinators', '.test'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'combinators'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -347,6 +468,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
   
@@ -361,6 +484,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -380,6 +511,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -395,6 +528,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -417,6 +558,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -432,6 +575,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.test'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -457,6 +608,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -472,6 +625,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -497,6 +658,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -522,6 +685,14 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['information', '.test'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.test', 'information'],
+    ]);
+
     const css = `/* information */
 .test {
   background-color: green;
@@ -540,6 +711,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -554,6 +727,14 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -573,6 +754,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
   
@@ -589,6 +772,14 @@ describe('jsToCss', () => {
         padding: 16,
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -602,7 +793,12 @@ describe('jsToCss', () => {
   padding: 16px;
 }`;
 
-    expect(jsToCss(input)).toStrictEqual({ name: 'index.css', css });
+    expect(jsToCss(input)).toStrictEqual({ 
+      name: 'index.css', 
+      css,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
   
   test('undefined key', () => {
@@ -614,6 +810,14 @@ describe('jsToCss', () => {
       },
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
+
     const input = {
       name: 'index.css',
       module: _module,
@@ -624,7 +828,10 @@ describe('jsToCss', () => {
       css: `.something {
   background-color: #fff;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('map', () => {
@@ -634,6 +841,14 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css: `/* something */
@@ -641,7 +856,10 @@ describe('jsToCss', () => {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('map + combinators', () => {
@@ -660,6 +878,16 @@ describe('jsToCss', () => {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['combinators', '.combinators'],
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.combinators', 'combinators'],
+      ['.something', 'something'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -687,6 +915,8 @@ describe('jsToCss', () => {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -699,6 +929,14 @@ describe('jsToCss', () => {
       module: _module,
     };
 
+    const objectToStyleMap = new Map([
+      ['something', 'p'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['p', 'something'],
+    ]);
+
     expect(jsToCss(input)).toStrictEqual({
       name: undefined,
       css: `/* something */
@@ -706,7 +944,10 @@ p {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('nested attribute styles', () => {
@@ -720,6 +961,14 @@ p {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
   
     const input = {
       name: 'index.css',
@@ -739,6 +988,8 @@ p {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css,
+      objectToStyleMap,
+      styleToObjectMap,
     });
   });
 
@@ -752,6 +1003,14 @@ p {
       },
     };
 
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
+
     const input = {
       name: 'index.css',
       module: _module,
@@ -763,7 +1022,10 @@ p {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('number px exclusions', () => {
@@ -774,6 +1036,14 @@ p {
         zoom: 1,
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
 
     const input = {
       name: 'index.css',
@@ -786,7 +1056,10 @@ p {
   font-size: 12px;
   z-index: 1000;
   zoom: 1;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('keyframes', () => {
@@ -810,6 +1083,14 @@ p {
         },
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['loading', '.loading'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.loading', 'loading'],
+    ]);
 
     const input = {
       name: 'index.css',
@@ -836,7 +1117,10 @@ p {
   40% {
     transform: scale(1);
   }
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 
   test('Webkit', () => {
@@ -848,6 +1132,14 @@ p {
         'WebkitTransition': 'all .2s',
       },
     };
+
+    const objectToStyleMap = new Map([
+      ['something', '.something'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.something', 'something'],
+    ]);
 
     const input = {
       name: 'index.css',
@@ -861,6 +1153,9 @@ p {
   background-color: #fff;
   font-size: 12px;
   padding: 16px;
-}`});
+}`,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
   });
 });

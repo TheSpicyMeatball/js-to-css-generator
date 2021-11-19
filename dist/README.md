@@ -11,7 +11,7 @@
 <p>Well, that's where <code>js-to-css-generator</code> comes in to save the day!</p>
 <p>With <code>js-to-css-generator</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
 
-<p><b>Version:</b> 1.4.0</p>
+<p><b>Version:</b> 1.5.0</p>
 
 <h3>Utils</h3>
 <ul>
@@ -552,6 +552,12 @@ export type CSSFile = {
   
   // The CSS file string content
   css: string,
+  
+  // JavaScript Map object of key/value pairs that maps the JS object name to a class name.
+  objectToStyleMap: Map<string, string>,
+
+  // JavaScript Map object of key/value pairs that maps the class name name to a JS object.
+  styleToObjectMap: Map<string, string>,
 };
 ```
 
@@ -625,8 +631,8 @@ README.md -- this file
       └───index.js - 430 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 10.06 KB
-      └───types.d.ts - 707 Bytes
+      └───index.js - 11.21 KB
+      └───types.d.ts - 795 Bytes
       └───types.js - 79 Bytes
   └───/es6
     └───/getFile
@@ -636,8 +642,8 @@ README.md -- this file
       └───index.js - 76 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 9.86 KB
-      └───types.d.ts - 707 Bytes
+      └───index.js - 11.01 KB
+      └───types.d.ts - 795 Bytes
       └───types.js - 12 Bytes
 ```
 
