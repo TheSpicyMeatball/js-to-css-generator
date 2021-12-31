@@ -34,7 +34,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     let outer = '';
 
     // Keys that have number types which we should NOT add 'px' to...
-    const numberPxExclusions = ['zIndex', 'zoom'];
+    const numberPxExclusions = ['flexGrow', 'zIndex', 'zoom'];
 
     for (const key of keys) {
       if (key === 'label' || (typeof obj[key] === 'object' && (key.startsWith('@media') || key.startsWith('@keyframes')))) continue;

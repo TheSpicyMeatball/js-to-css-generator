@@ -1,3 +1,6 @@
+## [1.5.1] - 2021-12-31
+- added support for flexGrow
+
 ## [1.5.0] - 2021-11-19
 - added maps for js objects and classes
 

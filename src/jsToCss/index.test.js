@@ -1032,6 +1032,7 @@ p {
     const _module = {
       something: {
         fontSize: 12,
+        flexGrow: 1,
         zIndex: 1000,
         zoom: 1,
       },
@@ -1053,6 +1054,7 @@ p {
     expect(jsToCss(input)).toStrictEqual({
       name: 'index.css',
       css: `.something {
+  flex-grow: 1;
   font-size: 12px;
   z-index: 1000;
   zoom: 1;
