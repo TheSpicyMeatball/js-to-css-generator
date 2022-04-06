@@ -4,6 +4,9 @@ import { CSSFile, File } from '../types';
 type MediaQuery = { key: string, obj: Record<string, unknown>, children?: MediaQuery[] };
 type Item = { key: string, obj: Record<string, unknown> };
 
+// Keys that have number types which we should NOT add 'px' to...
+const numberPxExclusions = ['flexGrow', 'lineHeight', 'opacity', 'zIndex', 'zoom'];
+
 /**
  * Convert JavaScript style objects to CSS files
  * 
@@ -32,9 +35,6 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
     let cssClass = iif(isNotNilOrEmpty(objName), `${indent}/* ${objName} */\n`, '') + `${indent}${className.trim()} {\n`;
 
     let outer = '';
-
-    // Keys that have number types which we should NOT add 'px' to...
-    const numberPxExclusions = ['flexGrow', 'zIndex', 'zoom'];
 
     for (const key of keys) {
       if (key === 'label' || (typeof obj[key] === 'object' && (key.startsWith('@media') || key.startsWith('@keyframes')))) continue;

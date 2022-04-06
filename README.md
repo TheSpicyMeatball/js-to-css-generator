@@ -11,7 +11,7 @@
 <p>Well, that's where <code>js-to-css-generator</code> comes in to save the day!</p>
 <p>With <code>js-to-css-generator</code>, you can <i>auto-MAGICALLY</i> deliver classic CSS alongside your CSS-in-JS so your legacy apps can hang around even longer! (just what you've always wanted)</p>
 
-<p><b>Version:</b> 1.5.1</p>
+<p><b>Version:</b> 1.5.2</p>
 
 <h3>Utils</h3>
 <ul>
@@ -631,7 +631,7 @@ README.md -- this file
       └───index.js - 430 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 11.22 KB
+      └───index.js - 11.23 KB
       └───types.d.ts - 795 Bytes
       └───types.js - 79 Bytes
   └───/es6
@@ -642,7 +642,7 @@ README.md -- this file
       └───index.js - 76 Bytes
     └───/jsToCss
       └───index.d.ts - 519 Bytes
-      └───index.js - 11.02 KB
+      └───index.js - 11.03 KB
       └───types.d.ts - 795 Bytes
       └───types.js - 12 Bytes
 ```

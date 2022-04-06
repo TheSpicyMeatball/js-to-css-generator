@@ -1,3 +1,6 @@
+## [1.5.2] - 2022-04-06
+- added support for lineHeight and opacity
+
 ## [1.5.1] - 2021-12-31
 - added support for flexGrow
 
