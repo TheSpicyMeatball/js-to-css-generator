@@ -516,6 +516,51 @@ describe('jsToCss', () => {
     });
   });
 
+  test('nested styles (deep)', () => {
+    const _module = {
+      information: {
+        backgroundColor: 'green',
+        fontSize: 12,
+        padding: 16,
+        '&[data-test*="true"]': {
+          '[data-test-child="true"]': {
+            color: '#fff',
+          },
+        },
+      },
+    };
+
+    const objectToStyleMap = new Map([
+      ['information', '.information'],
+    ]);
+
+    const styleToObjectMap = new Map([
+      ['.information', 'information'],
+    ]);
+  
+    const input = {
+      name: 'index.css',
+      module: _module,
+    };
+
+    const css = `.information {
+  background-color: green;
+  font-size: 12px;
+  padding: 16px;
+}
+
+.information[data-test*="true"] [data-test-child="true"] {
+  color: #fff;
+}`;
+
+    expect(jsToCss(input)).toStrictEqual({
+      name: 'index.css',
+      css,
+      objectToStyleMap,
+      styleToObjectMap,
+    });
+  });
+
   test('media query', () => {
     const _module = {
       information: {
@@ -956,6 +1001,9 @@ p {
         backgroundColor: 'green',
         fontSize: 12,
         padding: 16,
+        '&[class*="-value"]': {
+          color: '#fff',
+        },
         '[class*="-value"]': {
           color: '#fff',
         },
@@ -982,6 +1030,10 @@ p {
 }
 
 .information[class*="-value"] {
+  color: #fff;
+}
+
+.information [class*="-value"] {
   color: #fff;
 }`;
 

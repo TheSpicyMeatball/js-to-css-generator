@@ -5,7 +5,7 @@ type MediaQuery = { key: string, obj: Record<string, unknown>, children?: MediaQ
 type Item = { key: string, obj: Record<string, unknown> };
 
 // Keys that have number types which we should NOT add 'px' to...
-const numberPxExclusions = ['flexGrow', 'lineHeight', 'opacity', 'zIndex', 'zoom'];
+const numberPxExclusions = ['flexGrow', 'fontWeight', 'lineHeight', 'opacity', 'zIndex', 'zoom'];
 
 /**
  * Convert JavaScript style objects to CSS files
@@ -52,7 +52,7 @@ export const jsToCss = (files: File | File[]) : CSSFile | CSSFile[] => {
         // attribute selector
         outer = outer + getCss({
           obj: obj[key] as Record<string, unknown>, 
-          className: `${className}${key}`,
+          className: `${className} ${key}`,
           objName,
           indent,
         });

@@ -1,3 +1,7 @@
+## [1.5.3] - 2022-08-10
+- added support for fontWeight
+- fixed bug for nested attribute selectors
+
 ## [1.5.2] - 2022-04-06
 - added support for lineHeight and opacity
 
